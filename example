@@ -1,0 +1,22 @@
+public async static Task<Tenant> CallBack(string code)
+        {
+            XeroConfiguration XeroConfig = new XeroConfiguration
+            {
+                ClientId = ConfigurationManager.AppSettings["XeroClientId"],
+                ClientSecret = ConfigurationManager.AppSettings["XeroClientSecret"],
+                CallbackUri = new Uri(ConfigurationManager.AppSettings["XeroCallbackUri"]),
+                Scope = ConfigurationManager.AppSettings["XeroScope"],
+                State = ConfigurationManager.AppSettings["XeroState"]
+            };
+
+            var client = new XeroClient(XeroConfig);
+
+            var xeroToken = (XeroOAuth2Token)await client.RequestAccessTokenAsync(code);
+
+            List<Tenant> tenants = await client.GetConnectionsAsync(xeroToken);
+            Tenant firstTenant = tenants[0];
+
+            return firstTenant;
+
+          
+        }
